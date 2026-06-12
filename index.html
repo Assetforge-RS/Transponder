@@ -1,235 +1,435 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Transponder-Ausgabe</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Transponder-Ausgabe</title>
 
-  <style>
-    :root {
-      --bg: #f4f6f8;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #2563eb;
-      --danger: #dc2626;
-      --border: #d1d5db;
-    }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    * {
-      box-sizing: border-box;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+  padding: 14px;
+}
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 16px;
-    }
+.app {
+  max-width: 520px;
+  margin: auto;
+}
 
-    .app {
-      max-width: 480px;
-      margin: 0 auto;
-    }
+h1 {
+  font-size: 25px;
+  margin-bottom: 4px;
+}
 
-    h1 {
-      font-size: 26px;
-      margin: 10px 0 4px;
-    }
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 14px;
+}
 
-    .subtitle {
-      color: var(--muted);
-      margin-bottom: 18px;
-      font-size: 15px;
-    }
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.08);
+}
 
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
-    }
+label {
+  display: block;
+  font-weight: 700;
+  margin-top: 13px;
+  margin-bottom: 6px;
+}
 
-    label {
-      font-weight: 600;
-      display: block;
-      margin-top: 14px;
-      margin-bottom: 6px;
-    }
+input, select, textarea {
+  width: 100%;
+  font-size: 16px;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box;
+}
 
-    input, select, textarea {
-      width: 100%;
-      font-size: 16px;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-      color: var(--text);
-    }
+textarea {
+  min-height: 170px;
+  line-height: 1.4;
+}
 
-    textarea {
-      min-height: 170px;
-      resize: vertical;
-      line-height: 1.45;
-    }
+button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: #2563eb;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+}
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+button.secondary {
+  background: #374151;
+}
 
-    button {
-      width: 100%;
-      margin-top: 16px;
-      padding: 15px;
-      font-size: 17px;
-      font-weight: 700;
-      border: none;
-      border-radius: 14px;
-      background: var(--primary);
-      color: white;
-      cursor: pointer;
-    }
+button.danger {
+  background: #dc2626;
+}
 
-    button.secondary {
-      background: #374151;
-    }
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
 
-    .result {
-      line-height: 1.55;
-      font-size: 15px;
-    }
+canvas {
+  width: 100%;
+  height: 160px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: white;
+  touch-action: none;
+}
 
-    .result strong {
-      display: inline-block;
-      min-width: 145px;
-    }
+.history-item {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
 
-    .fee {
-      color: var(--danger);
-      font-weight: 700;
-    }
+.small {
+  color: #6b7280;
+  font-size: 13px;
+}
 
-    @media print {
-      body {
-        background: white;
-      }
-
-      button {
-        display: none;
-      }
-
-      .card {
-        box-shadow: none;
-        border: 1px solid #ddd;
-      }
-    }
-  </style>
+#qrcode {
+  margin-top: 12px;
+}
+</style>
 </head>
 
 <body>
-  <div class="app">
-    <h1>Transponder-Ausgabe</h1>
-    <div class="subtitle">Ausgabeprotokoll für Schlüssel / Transponder</div>
+<div class="app">
 
-    <div class="card">
-      <label>Schlüsselnummer</label>
-      <input id="keyNumber" type="text" placeholder="z. B. S-1042" />
+<h1>Transponder-Ausgabe</h1>
+<div class="subtitle">Ausgabeprotokoll mit PDF, QR-Code, E-Mail und Historie</div>
 
-      <label>Transponder ausgegeben an</label>
-      <input id="person" type="text" placeholder="Name eintragen" />
+<div class="card">
+  <label>Schlüsselnummer</label>
+  <input id="keyNumber" placeholder="z. B. S-1042">
 
-      <div class="row">
-        <div>
-          <label>Datum</label>
-          <input id="date" type="date" />
-        </div>
+  <label>Transponder ausgegeben an</label>
+  <input id="person" placeholder="Name eintragen">
 
-        <div>
-          <label>Rechte-Gruppe</label>
-          <select id="group">
-            <option value="1">Gruppe 1</option>
-            <option value="2">Gruppe 2</option>
-            <option value="3">Gruppe 3</option>
-            <option value="4">Gruppe 4</option>
-            <option value="5">Gruppe 5</option>
-          </select>
-        </div>
-      </div>
-
-      <label>Hinweise zur Nutzung</label>
-      <textarea id="notes"></textarea>
-
-      <button onclick="createProtocol()">Protokoll erstellen</button>
-      <button class="secondary" onclick="window.print()">Drucken / PDF speichern</button>
+  <div class="row">
+    <div>
+      <label>Datum</label>
+      <input id="date" type="date">
     </div>
-
-    <div class="card result" id="result">
-      Noch kein Protokoll erstellt.
+    <div>
+      <label>Rechte-Gruppe</label>
+      <select id="group">
+        <option>Gruppe 1</option>
+        <option>Gruppe 2</option>
+        <option>Gruppe 3</option>
+        <option>Gruppe 4</option>
+        <option>Gruppe 5</option>
+      </select>
     </div>
   </div>
 
-  <script>
-    const defaultNotes = `Hinweise zur Nutzung des Transponders:
+  <label>Hinweise zur Nutzung</label>
+  <textarea id="notes"></textarea>
 
-1. Der Transponder ist sorgfältig aufzubewahren und darf nicht an unberechtigte Personen weitergegeben werden.
+  <label>Digitale Unterschrift Empfänger</label>
+  <canvas id="signature"></canvas>
+  <button class="secondary" onclick="clearSignature()">Unterschrift löschen</button>
 
-2. Der Transponder ist ausschließlich für dienstliche bzw. freigegebene Zwecke zu verwenden.
+  <button onclick="createProtocol()">Protokoll erstellen</button>
+  <button onclick="createPDF()">PDF erzeugen</button>
+  <button onclick="sendMail()">E-Mail-Entwurf erstellen</button>
+  <button class="secondary" onclick="exportCSV()">CSV / Excel exportieren</button>
+</div>
 
-3. Bei Verlust oder Beschädigung ist unverzüglich das zentrale Büro zu informieren.
+<div class="card">
+  <h2>QR-Code</h2>
+  <div class="small">Der QR-Code enthält die wichtigsten Ausgabedaten.</div>
+  <div id="qrcode"></div>
+</div>
 
-4. Für den Transponder kann bei Verlust oder nicht ordnungsgemäßer Rückgabe eine Haftungsgebühr in Höhe von 50 € erhoben werden.
+<div class="card">
+  <h2>Ausgabeprotokoll</h2>
+  <div id="result">Noch kein Protokoll erstellt.</div>
+</div>
 
-5. Ein notwendiger Batteriewechsel ist im zentralen Büro zu veranlassen. Der Batteriewechsel darf nicht eigenständig durchgeführt werden.
+<div class="card">
+  <h2>Historie</h2>
+  <div id="history"></div>
+  <button class="danger" onclick="clearHistory()">Historie löschen</button>
+</div>
 
-6. Änderungen der Zutrittsrechte dürfen ausschließlich durch berechtigte Personen vorgenommen werden.
+</div>
 
-7. Der Transponder ist bei Austritt, Aufgabenwechsel oder nach Aufforderung unverzüglich zurückzugeben.
+<script>
+const defaultNotes = `Hinweise zur Nutzung des Transponders:
 
-8. Der Nutzer bestätigt mit der Annahme, dass die Hinweise verstanden wurden.`;
+1. Der Transponder ist sorgfältig aufzubewahren.
 
-    document.getElementById("notes").value = defaultNotes;
+2. Der Transponder darf nicht an unberechtigte Personen weitergegeben werden.
 
-    function setToday() {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, "0");
-      const dd = String(today.getDate()).padStart(2, "0");
-      document.getElementById("date").value = `${yyyy}-${mm}-${dd}`;
-    }
+3. Der Transponder ist ausschließlich für freigegebene Bereiche und dienstliche Zwecke zu verwenden.
 
-    setToday();
+4. Bei Verlust, Beschädigung oder Fehlfunktion ist unverzüglich das zentrale Büro zu informieren.
 
-    function formatDate(dateString) {
-      if (!dateString) return "";
-      const [year, month, day] = dateString.split("-");
-      return `${day}.${month}.${year}`;
-    }
+5. Für Verlust oder nicht ordnungsgemäße Rückgabe kann eine Haftungsgebühr von 50 € erhoben werden.
 
-    function createProtocol() {
-      const keyNumber = document.getElementById("keyNumber").value || "nicht angegeben";
-      const person = document.getElementById("person").value || "nicht angegeben";
-      const date = formatDate(document.getElementById("date").value);
-      const group = document.getElementById("group").value;
-      const notes = document.getElementById("notes").value.replace(/\n/g, "<br>");
+6. Ein Batteriewechsel ist ausschließlich über das zentrale Büro zu veranlassen.
 
-      document.getElementById("result").innerHTML = `
-        <h2>Ausgabeprotokoll</h2>
-        <p><strong>Schlüsselnummer:</strong> ${keyNumber}</p>
-        <p><strong>Ausgegeben an:</strong> ${person}</p>
-        <p><strong>Datum:</strong> ${date}</p>
-        <p><strong>Rechte-Gruppe:</strong> Gruppe ${group}</p>
-        <p><strong>Haftungsgebühr:</strong> <span class="fee">50 €</span></p>
-        <hr>
-        <p>${notes}</p>
-        <hr>
-        <p><strong>Unterschrift Ausgabe:</strong> ___________________________</p>
-        <p><strong>Unterschrift Empfänger:</strong> ___________________________</p>
-      `;
-    }
-  </script>
+7. Eigenständiges Öffnen, Manipulieren oder Beschriften des Transponders ist nicht zulässig.
+
+8. Änderungen der Zutrittsrechte dürfen nur durch berechtigte Personen erfolgen.
+
+9. Der Transponder ist bei Austritt, Aufgabenwechsel oder auf Aufforderung unverzüglich zurückzugeben.
+
+10. Der Empfänger bestätigt mit seiner Unterschrift den Erhalt und die Kenntnisnahme dieser Hinweise.`;
+
+document.getElementById("notes").value = defaultNotes;
+
+function setToday() {
+  const d = new Date();
+  document.getElementById("date").value = d.toISOString().split("T")[0];
+}
+setToday();
+
+function getData() {
+  return {
+    keyNumber: document.getElementById("keyNumber").value || "nicht angegeben",
+    person: document.getElementById("person").value || "nicht angegeben",
+    date: document.getElementById("date").value,
+    group: document.getElementById("group").value,
+    notes: document.getElementById("notes").value
+  };
+}
+
+function formatDate(date) {
+  if (!date) return "";
+  const [y,m,d] = date.split("-");
+  return `${d}.${m}.${y}`;
+}
+
+function createProtocol() {
+  const d = getData();
+
+  document.getElementById("result").innerHTML = `
+    <p><b>Schlüsselnummer:</b> ${d.keyNumber}</p>
+    <p><b>Ausgegeben an:</b> ${d.person}</p>
+    <p><b>Datum:</b> ${formatDate(d.date)}</p>
+    <p><b>Rechte-Gruppe:</b> ${d.group}</p>
+    <p><b>Haftungsgebühr:</b> 50 €</p>
+    <hr>
+    <p>${d.notes.replace(/\n/g, "<br>")}</p>
+  `;
+
+  createQRCode();
+  saveHistory();
+}
+
+function createQRCode() {
+  const d = getData();
+  const qrText =
+`Transponder-Ausgabe
+Schlüsselnummer: ${d.keyNumber}
+Empfänger: ${d.person}
+Datum: ${formatDate(d.date)}
+Rechte: ${d.group}
+Haftungsgebühr: 50 €`;
+
+  document.getElementById("qrcode").innerHTML = "";
+  new QRCode(document.getElementById("qrcode"), {
+    text: qrText,
+    width: 150,
+    height: 150
+  });
+}
+
+function saveHistory() {
+  const d = getData();
+  let history = JSON.parse(localStorage.getItem("transponderHistory") || "[]");
+  history.unshift({
+    ...d,
+    savedAt: new Date().toLocaleString("de-DE")
+  });
+  localStorage.setItem("transponderHistory", JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  let history = JSON.parse(localStorage.getItem("transponderHistory") || "[]");
+
+  if (history.length === 0) {
+    document.getElementById("history").innerHTML = "Keine Einträge vorhanden.";
+    return;
+  }
+
+  document.getElementById("history").innerHTML = history.map(item => `
+    <div class="history-item">
+      <b>${item.keyNumber}</b><br>
+      ${item.person}<br>
+      ${formatDate(item.date)} – ${item.group}<br>
+      <span class="small">Gespeichert: ${item.savedAt}</span>
+    </div>
+  `).join("");
+}
+renderHistory();
+
+function clearHistory() {
+  if (confirm("Historie wirklich löschen?")) {
+    localStorage.removeItem("transponderHistory");
+    renderHistory();
+  }
+}
+
+function sendMail() {
+  const d = getData();
+
+  const subject = encodeURIComponent(`Transponder-Ausgabe ${d.keyNumber}`);
+
+  const body = encodeURIComponent(
+`Hallo,
+
+anbei die Daten zur Transponder-Ausgabe:
+
+Schlüsselnummer: ${d.keyNumber}
+Ausgegeben an: ${d.person}
+Datum: ${formatDate(d.date)}
+Rechte-Gruppe: ${d.group}
+
+Haftungsgebühr bei Verlust oder nicht ordnungsgemäßer Rückgabe: 50 €
+
+Hinweise:
+${d.notes}
+
+Viele Grüße`
+  );
+
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function exportCSV() {
+  const history = JSON.parse(localStorage.getItem("transponderHistory") || "[]");
+
+  let csv = "Schlüsselnummer;Empfänger;Datum;Rechte-Gruppe;Gespeichert am\n";
+
+  history.forEach(i => {
+    csv += `"${i.keyNumber}";"${i.person}";"${formatDate(i.date)}";"${i.group}";"${i.savedAt}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "transponder-historie.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+/* Digitale Unterschrift */
+const canvas = document.getElementById("signature");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 160;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches ? e.touches[0] : e;
+  return {
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top
+  };
+}
+
+canvas.addEventListener("pointerdown", e => {
+  drawing = true;
+  const p = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+});
+
+canvas.addEventListener("pointermove", e => {
+  if (!drawing) return;
+  const p = getPos(e);
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+});
+
+canvas.addEventListener("pointerup", () => drawing = false);
+canvas.addEventListener("pointerleave", () => drawing = false);
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+async function createPDF() {
+  const { jsPDF } = window.jspdf;
+  const d = getData();
+
+  const pdf = new jsPDF();
+  let y = 15;
+
+  pdf.setFontSize(18);
+  pdf.text("Transponder-Ausgabeprotokoll", 15, y);
+  y += 12;
+
+  pdf.setFontSize(11);
+  pdf.text(`Schlüsselnummer: ${d.keyNumber}`, 15, y); y += 7;
+  pdf.text(`Ausgegeben an: ${d.person}`, 15, y); y += 7;
+  pdf.text(`Datum: ${formatDate(d.date)}`, 15, y); y += 7;
+  pdf.text(`Rechte-Gruppe: ${d.group}`, 15, y); y += 7;
+  pdf.text(`Haftungsgebühr: 50 EUR`, 15, y); y += 10;
+
+  pdf.setFontSize(13);
+  pdf.text("Hinweise zur Nutzung:", 15, y);
+  y += 8;
+
+  pdf.setFontSize(10);
+  const splitNotes = pdf.splitTextToSize(d.notes, 180);
+  pdf.text(splitNotes, 15, y);
+  y += splitNotes.length * 5 + 10;
+
+  if (y > 240) {
+    pdf.addPage();
+    y = 15;
+  }
+
+  pdf.setFontSize(12);
+  pdf.text("Unterschrift Empfänger:", 15, y);
+  y += 8;
+
+  const sig = canvas.toDataURL("image/png");
+  pdf.addImage(sig, "PNG", 15, y, 80, 35);
+
+  y += 45;
+  pdf.text("Unterschrift Ausgabe:", 15, y);
+  pdf.line(60, y, 150, y);
+
+  pdf.save(`Transponder_${d.keyNumber}.pdf`);
+}
+</script>
+
 </body>
 </html>
