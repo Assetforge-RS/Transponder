@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Transponder-Ausgabe</title>
+
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --danger: #dc2626;
+      --border: #d1d5db;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin: 10px 0 4px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-size: 15px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      font-size: 16px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 15px;
+      font-size: 17px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #374151;
+    }
+
+    .result {
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .result strong {
+      display: inline-block;
+      min-width: 145px;
+    }
+
+    .fee {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      button {
+        display: none;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Transponder-Ausgabe</h1>
+    <div class="subtitle">Ausgabeprotokoll für Schlüssel / Transponder</div>
+
+    <div class="card">
+      <label>Schlüsselnummer</label>
+      <input id="keyNumber" type="text" placeholder="z. B. S-1042" />
+
+      <label>Transponder ausgegeben an</label>
+      <input id="person" type="text" placeholder="Name eintragen" />
+
+      <div class="row">
+        <div>
+          <label>Datum</label>
+          <input id="date" type="date" />
+        </div>
+
+        <div>
+          <label>Rechte-Gruppe</label>
+          <select id="group">
+            <option value="1">Gruppe 1</option>
+            <option value="2">Gruppe 2</option>
+            <option value="3">Gruppe 3</option>
+            <option value="4">Gruppe 4</option>
+            <option value="5">Gruppe 5</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Hinweise zur Nutzung</label>
+      <textarea id="notes"></textarea>
+
+      <button onclick="createProtocol()">Protokoll erstellen</button>
+      <button class="secondary" onclick="window.print()">Drucken / PDF speichern</button>
+    </div>
+
+    <div class="card result" id="result">
+      Noch kein Protokoll erstellt.
+    </div>
+  </div>
+
+  <script>
+    const defaultNotes = `Hinweise zur Nutzung des Transponders:
+
+1. Der Transponder ist sorgfältig aufzubewahren und darf nicht an unberechtigte Personen weitergegeben werden.
+
+2. Der Transponder ist ausschließlich für dienstliche bzw. freigegebene Zwecke zu verwenden.
+
+3. Bei Verlust oder Beschädigung ist unverzüglich das zentrale Büro zu informieren.
+
+4. Für den Transponder kann bei Verlust oder nicht ordnungsgemäßer Rückgabe eine Haftungsgebühr in Höhe von 50 € erhoben werden.
+
+5. Ein notwendiger Batteriewechsel ist im zentralen Büro zu veranlassen. Der Batteriewechsel darf nicht eigenständig durchgeführt werden.
+
+6. Änderungen der Zutrittsrechte dürfen ausschließlich durch berechtigte Personen vorgenommen werden.
+
+7. Der Transponder ist bei Austritt, Aufgabenwechsel oder nach Aufforderung unverzüglich zurückzugeben.
+
+8. Der Nutzer bestätigt mit der Annahme, dass die Hinweise verstanden wurden.`;
+
+    document.getElementById("notes").value = defaultNotes;
+
+    function setToday() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      document.getElementById("date").value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    setToday();
+
+    function formatDate(dateString) {
+      if (!dateString) return "";
+      const [year, month, day] = dateString.split("-");
+      return `${day}.${month}.${year}`;
+    }
+
+    function createProtocol() {
+      const keyNumber = document.getElementById("keyNumber").value || "nicht angegeben";
+      const person = document.getElementById("person").value || "nicht angegeben";
+      const date = formatDate(document.getElementById("date").value);
+      const group = document.getElementById("group").value;
+      const notes = document.getElementById("notes").value.replace(/\n/g, "<br>");
+
+      document.getElementById("result").innerHTML = `
+        <h2>Ausgabeprotokoll</h2>
+        <p><strong>Schlüsselnummer:</strong> ${keyNumber}</p>
+        <p><strong>Ausgegeben an:</strong> ${person}</p>
+        <p><strong>Datum:</strong> ${date}</p>
+        <p><strong>Rechte-Gruppe:</strong> Gruppe ${group}</p>
+        <p><strong>Haftungsgebühr:</strong> <span class="fee">50 €</span></p>
+        <hr>
+        <p>${notes}</p>
+        <hr>
+        <p><strong>Unterschrift Ausgabe:</strong> ___________________________</p>
+        <p><strong>Unterschrift Empfänger:</strong> ___________________________</p>
+      `;
+    }
+  </script>
+</body>
+</html>
