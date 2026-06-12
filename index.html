@@ -1,217 +1,381 @@
-Ja. Hier ist der komplette Code als eine HTML-Datei für iPhone/Safari:
+Hier ist der komplette Code als eine iPhone-optimierte HTML-Datei:
 
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Vollmacht Eigentümerversammlung</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f2f2f7;
-      margin: 0;
-      padding: 16px;
-      color: #111;
-    }
-    .app {
-      max-width: 520px;
-      margin: auto;
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-    }
-    h1 {
-      font-size: 24px;
-      margin-top: 0;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-top: 16px;
-      margin-bottom: 6px;
-    }
-    input, select, textarea, button {
-      width: 100%;
-      font-size: 17px;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    textarea {
-      min-height: 90px;
-    }
-    canvas {
-      width: 100%;
-      height: 180px;
-      border: 2px dashed #aaa;
-      border-radius: 12px;
-      background: #fff;
-      touch-action: none;
-    }
-    button {
-      margin-top: 14px;
-      border: none;
-      font-weight: 700;
-      background: #007aff;
-      color: white;
-    }
-    button.secondary {
-      background: #8e8e93;
-    }
-    .hint {
-      font-size: 13px;
-      color: #666;
-      margin-top: 8px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Begehungsprotokoll Haus</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f2f2f7;
+  color: #111;
+}
+.app {
+  max-width: 560px;
+  margin: auto;
+  padding: 14px;
+}
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+}
+h1 {
+  font-size: 24px;
+  margin: 4px 0 12px;
+}
+h2 {
+  font-size: 19px;
+  margin-top: 0;
+}
+label {
+  display: block;
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 5px;
+}
+input, select, textarea, button {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+}
+textarea {
+  min-height: 75px;
+}
+button {
+  background: #007aff;
+  color: white;
+  border: none;
+  font-weight: 700;
+  margin-top: 12px;
+}
+button.secondary {
+  background: #8e8e93;
+}
+button.danger {
+  background: #ff3b30;
+}
+.preview-img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-top: 10px;
+  display: none;
+}
+.item {
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 12px;
+  margin-top: 12px;
+  background: #fafafa;
+}
+.badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #e5e5ea;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.small {
+  font-size: 13px;
+  color: #666;
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <h1>Vollmacht erstellen</h1>
-    <label>Anlass</label>
-    <select id="anlass">
-      <option>Eigentümerversammlung, Diepeschrather Straße 15, 51069 Köln am 10.06.2026</option>
+<div class="app">
+  <div class="card">
+    <h1>Begehungsprotokoll</h1>
+    <label>Hausansicht / Titelbild</label>
+    <input type="file" accept="image/*" capture="environment" id="hausbildInput">
+    <img id="hausbildPreview" class="preview-img">
+    <label>Objektart</label>
+    <select id="objektart">
+      <option>Wohnung</option>
+      <option>Einfamilienhaus</option>
+      <option>Mehrfamilienhaus</option>
     </select>
-    <label>Datum der Vollmacht</label>
-    <input type="date" id="datum" />
-    <label>Ersteller der Vollmacht</label>
-    <select id="ersteller">
-      <option 
-        data-name="Meike Herbers"
-        data-geburt="06.06.1987"
-        data-adresse="Auf der Kicken 44, 51069 Köln">
-        Meike Herbers, geb. 06.06.1987, wohnhaft Auf der Kicken 44, 51069 Köln
-      </option>
-    </select>
-    <label>Vertreter</label>
-    <input id="vertreter" value="Kai Müller, geboren am 27.11.1979" />
-    <label>Empfänger</label>
-    <input id="empfaenger" value="hausverwaltung@rbiv.de" />
-    <label>Zusätzliche Hinweise</label>
-    <textarea id="hinweis">Hiermit wird der oben genannte Vertreter bevollmächtigt, die Erstellerin in der Eigentümerversammlung zu vertreten, Erklärungen abzugeben, Anträge zu stellen und das Stimmrecht auszuüben.</textarea>
-    <label>Unterschrift</label>
-    <canvas id="signature"></canvas>
-    <button class="secondary" onclick="clearSignature()">Unterschrift löschen</button>
-    <button onclick="createPDF()">PDF erstellen</button>
-    <button onclick="sendMail()">E-Mail an Hausverwaltung vorbereiten</button>
-    <p class="hint">
-      Hinweis: Auf dem iPhone kann die PDF heruntergeladen oder geteilt werden. Eine echte automatische E-Mail mit PDF-Anhang geht nur mit Server/Backend. Diese App öffnet deshalb die E-Mail vorbereitet.
-    </p>
+    <label>Objektbezeichnung</label>
+    <input id="objektname" placeholder="z. B. D15 oder Deichrather Straße 15">
+    <label>Adresse</label>
+    <input id="adresse" placeholder="Straße, PLZ, Ort">
+    <label>Datum der Begehung</label>
+    <input type="date" id="datum">
+    <label>Teilnehmer</label>
+    <textarea id="teilnehmer" placeholder="z. B. Eigentümer, Hausverwaltung, Handwerker"></textarea>
   </div>
+  <div class="card">
+    <h2>Vordefinierte Checkliste</h2>
+    <div id="checklist"></div>
+  </div>
+  <div class="card">
+    <h2>Freie Begehungspunkte</h2>
+    <div id="freiePunkte"></div>
+    <button onclick="addFreierPunkt()">+ Freien Punkt hinzufügen</button>
+  </div>
+  <div class="card">
+    <h2>Export</h2>
+    <button onclick="createPDF()">PDF-Bericht erstellen</button>
+    <button class="secondary" onclick="sendMail()">E-Mail vorbereiten</button>
+  </div>
+</div>
 <script>
-  const canvas = document.getElementById("signature");
-  const ctx = canvas.getContext("2d");
-  let drawing = false;
-  function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * window.devicePixelRatio;
-    canvas.height = rect.height * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#000";
-  }
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
-  function getPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches ? e.touches[0] : e;
-    return {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top
-    };
-  }
-  canvas.addEventListener("pointerdown", e => {
-    drawing = true;
-    const p = getPos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
+const checklistData = {
+  "Dach": ["Dachdeckung", "Dachrinnen", "Fallrohre", "Dachfenster", "Abdichtungen"],
+  "Fassade": ["Putz", "Anstrich", "Risse", "Dämmung", "Balkone"],
+  "Fenster & Türen": ["Haustür", "Wohnungstüren", "Kellerzugänge", "Fenster", "Beschläge"],
+  "Treppenhaus": ["Wände", "Boden", "Geländer", "Beleuchtung", "Brandschutz"],
+  "Keller": ["Feuchtigkeit", "Beleuchtung", "Boden", "Wände", "Kellerfenster"],
+  "Heizung": ["Kessel", "Pumpen", "Leitungen", "Heizkörper", "Regelung"],
+  "Sanitär": ["Hauptleitungen", "Armaturen", "Abwasser", "Warmwasserbereitung"],
+  "Elektro": ["Hauptverteilung", "Unterverteilungen", "Beleuchtung", "Steckdosen", "Klingelanlage"],
+  "Außenanlagen": ["Wege", "Pflaster", "Entwässerung", "Grünflächen", "Zäune"]
+};
+const standorte = [
+  "Nicht relevant",
+  "Kellergeschoss",
+  "Erdgeschoss",
+  "1. Obergeschoss",
+  "2. Obergeschoss",
+  "3. Obergeschoss",
+  "4. Obergeschoss",
+  "Dachgeschoss",
+  "Treppenhaus",
+  "Außenbereich",
+  "Technikraum",
+  "Heizungsraum",
+  "Waschküche"
+];
+const massnahmen = [
+  "Keine Maßnahme erforderlich",
+  "Beobachten",
+  "Schönheitsreparatur",
+  "Funktion wiederherstellen",
+  "Ersetzen"
+];
+const prioritaeten = [
+  "Niedrig",
+  "Mittel",
+  "Hoch",
+  "Sofort"
+];
+let hausbild = "";
+let punktCounter = 0;
+document.getElementById("datum").valueAsDate = new Date();
+document.getElementById("hausbildInput").addEventListener("change", function(e) {
+  readImage(e.target.files[0], img => {
+    hausbild = img;
+    const preview = document.getElementById("hausbildPreview");
+    preview.src = img;
+    preview.style.display = "block";
   });
-  canvas.addEventListener("pointermove", e => {
-    if (!drawing) return;
-    e.preventDefault();
-    const p = getPos(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
+});
+function readImage(file, callback) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => callback(e.target.result);
+  reader.readAsDataURL(file);
+}
+function optionList(arr) {
+  return arr.map(x => `<option>${x}</option>`).join("");
+}
+function createItem(gewerk, punkt, frei = false) {
+  punktCounter++;
+  const id = "p" + punktCounter;
+  return `
+    <div class="item" data-id="${id}">
+      <span class="badge">${frei ? "Freier Punkt" : gewerk}</span>
+      <label>Gewerk / Bereich</label>
+      <input class="gewerk" value="${gewerk || ""}">
+      <label>Prüfpunkt</label>
+      <input class="pruefpunkt" value="${punkt || ""}">
+      <label>Standort</label>
+      <select class="standort">${optionList(standorte)}</select>
+      <label>Wohnung / Einheit optional</label>
+      <input class="wohnung" placeholder="z. B. WE 04, EG links, Wohnung rechts">
+      <label>Zustand</label>
+      <select class="zustand">
+        <option value="1">1 - Sehr gut</option>
+        <option value="2">2 - Gut</option>
+        <option value="3" selected>3 - Mittel / Beobachten</option>
+        <option value="4">4 - Schlecht</option>
+        <option value="5">5 - Sofortiger Handlungsbedarf</option>
+      </select>
+      <label>Maßnahme</label>
+      <select class="massnahme">${optionList(massnahmen)}</select>
+      <label>Priorität</label>
+      <select class="prioritaet">${optionList(prioritaeten)}</select>
+      <label>Beschreibung</label>
+      <textarea class="beschreibung" placeholder="Was wurde festgestellt?"></textarea>
+      <label>Empfohlene Maßnahme</label>
+      <textarea class="empfehlung" placeholder="Was sollte gemacht werden?"></textarea>
+      <label>Kostenschätzung €</label>
+      <input class="kosten" type="number" placeholder="0">
+      <label>Foto</label>
+      <input type="file" accept="image/*" capture="environment" onchange="handleItemImage(event, '${id}')">
+      <img class="preview-img item-img" id="img-${id}">
+      ${frei ? `<button class="danger" onclick="this.parentElement.remove()">Punkt löschen</button>` : ""}
+    </div>
+  `;
+}
+function renderChecklist() {
+  const container = document.getElementById("checklist");
+  let html = "";
+  for (const gewerk in checklistData) {
+    html += `<h2>${gewerk}</h2>`;
+    checklistData[gewerk].forEach(punkt => {
+      html += createItem(gewerk, punkt, false);
+    });
+  }
+  container.innerHTML = html;
+}
+function addFreierPunkt() {
+  document.getElementById("freiePunkte").insertAdjacentHTML(
+    "beforeend",
+    createItem("", "", true)
+  );
+}
+function handleItemImage(event, id) {
+  readImage(event.target.files[0], img => {
+    const preview = document.getElementById("img-" + id);
+    preview.src = img;
+    preview.style.display = "block";
   });
-  canvas.addEventListener("pointerup", () => drawing = false);
-  canvas.addEventListener("pointerleave", () => drawing = false);
-  function clearSignature() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+function getItems() {
+  return [...document.querySelectorAll(".item")].map(item => ({
+    gewerk: item.querySelector(".gewerk").value,
+    pruefpunkt: item.querySelector(".pruefpunkt").value,
+    standort: item.querySelector(".standort").value,
+    wohnung: item.querySelector(".wohnung").value,
+    zustand: item.querySelector(".zustand").value,
+    massnahme: item.querySelector(".massnahme").value,
+    prioritaet: item.querySelector(".prioritaet").value,
+    beschreibung: item.querySelector(".beschreibung").value,
+    empfehlung: item.querySelector(".empfehlung").value,
+    kosten: Number(item.querySelector(".kosten").value || 0),
+    bild: item.querySelector(".item-img")?.src || ""
+  }));
+}
+function formatDate(date) {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("de-DE");
+}
+function createPDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  const items = getItems();
+  const objektname = document.getElementById("objektname").value;
+  const adresse = document.getElementById("adresse").value;
+  const objektart = document.getElementById("objektart").value;
+  const datum = formatDate(document.getElementById("datum").value);
+  const teilnehmer = document.getElementById("teilnehmer").value;
+  let y = 15;
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(18);
+  pdf.text("Begehungsprotokoll", 105, y, { align: "center" });
+  y += 10;
+  if (hausbild) {
+    pdf.addImage(hausbild, "JPEG", 20, y, 170, 75);
+    y += 85;
   }
-  function getData() {
-    const erstellerSelect = document.getElementById("ersteller");
-    const option = erstellerSelect.options[erstellerSelect.selectedIndex];
-    return {
-      anlass: document.getElementById("anlass").value,
-      datum: document.getElementById("datum").value,
-      erstellerName: option.dataset.name,
-      erstellerGeburt: option.dataset.geburt,
-      erstellerAdresse: option.dataset.adresse,
-      vertreter: document.getElementById("vertreter").value,
-      empfaenger: document.getElementById("empfaenger").value,
-      hinweis: document.getElementById("hinweis").value
-    };
-  }
-  function formatDate(dateString) {
-    if (!dateString) return "";
-    const d = new Date(dateString);
-    return d.toLocaleDateString("de-DE");
-  }
-  function createPDF() {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-    const data = getData();
-    let y = 20;
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Objekt: ${objektname}`, 20, y); y += 7;
+  pdf.text(`Objektart: ${objektart}`, 20, y); y += 7;
+  pdf.text(`Adresse: ${adresse}`, 20, y); y += 7;
+  pdf.text(`Datum: ${datum}`, 20, y); y += 7;
+  pdf.text(`Teilnehmer: ${teilnehmer}`, 20, y, { maxWidth: 170 });
+  pdf.addPage();
+  y = 15;
+  const relevante = items.filter(i =>
+    i.beschreibung || i.empfehlung || i.kosten > 0 || i.zustand >= 4
+  );
+  const gesamtKosten = relevante.reduce((sum, i) => sum + i.kosten, 0);
+  const sofort = relevante.filter(i => i.prioritaet === "Sofort" || i.zustand == 5);
+  const hoch = relevante.filter(i => i.prioritaet === "Hoch" || i.zustand == 4);
+  const beobachten = relevante.filter(i => i.massnahme === "Beobachten" || i.zustand == 3);
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(16);
+  pdf.text("Zusammenfassung", 20, y); y += 10;
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(11);
+  pdf.text(`Erfasste relevante Punkte: ${relevante.length}`, 20, y); y += 7;
+  pdf.text(`Sofortmaßnahmen: ${sofort.length}`, 20, y); y += 7;
+  pdf.text(`Hohe Priorität: ${hoch.length}`, 20, y); y += 7;
+  pdf.text(`Beobachtungspunkte: ${beobachten.length}`, 20, y); y += 7;
+  pdf.text(`Geschätzte Gesamtkosten: ${gesamtKosten.toLocaleString("de-DE")} €`, 20, y);
+  pdf.addPage();
+  y = 15;
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(16);
+  pdf.text("Maßnahmenliste", 20, y); y += 10;
+  relevante.forEach((i, index) => {
+    if (y > 250) {
+      pdf.addPage();
+      y = 15;
+    }
     pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(18);
-    pdf.text("Vollmacht", 105, y, { align: "center" });
-    y += 18;
-    pdf.setFontSize(11);
+    pdf.setFontSize(12);
+    pdf.text(`${index + 1}. ${i.gewerk} – ${i.pruefpunkt}`, 20, y);
+    y += 7;
     pdf.setFont("helvetica", "normal");
-    pdf.text(`Anlass: ${data.anlass}`, 20, y, { maxWidth: 170 });
-    y += 18;
-    pdf.text(`Datum der Vollmacht: ${formatDate(data.datum)}`, 20, y);
-    y += 12;
-    pdf.text("Vollmachtgeberin:", 20, y);
-    y += 8;
-    pdf.text(`${data.erstellerName}, geboren am ${data.erstellerGeburt}`, 20, y);
-    y += 8;
-    pdf.text(`wohnhaft ${data.erstellerAdresse}`, 20, y);
-    y += 16;
-    pdf.text("bevollmächtigt hiermit:", 20, y);
-    y += 8;
-    pdf.text(data.vertreter, 20, y);
-    y += 16;
-    const text = pdf.splitTextToSize(data.hinweis, 170);
-    pdf.text(text, 20, y);
-    y += text.length * 7 + 18;
-    pdf.text("Ort, Datum: Köln, " + formatDate(data.datum), 20, y);
-    y += 16;
-    const signatureImg = canvas.toDataURL("image/png");
-    pdf.text("Unterschrift:", 20, y);
-    y += 6;
-    pdf.addImage(signatureImg, "PNG", 20, y, 80, 35);
-    pdf.save("Vollmacht_Eigentuemer­versammlung.pdf");
-  }
-  function sendMail() {
-    const data = getData();
-    const subject = encodeURIComponent("Vollmacht Eigentümerversammlung Diepeschrather Straße 15");
-    const body = encodeURIComponent(
-      "Sehr geehrte Damen und Herren,\n\n" +
-      "anbei bzw. nachfolgend erhalten Sie die Vollmacht für die Eigentümerversammlung Diepeschrather Straße 15, 51069 Köln am 10.06.2026.\n\n" +
-      "Vollmachtgeberin: " + data.erstellerName + "\n" +
-      "Vertreter: " + data.vertreter + "\n\n" +
-      "Mit freundlichen Grüßen\n" +
-      data.erstellerName
-    );
-    window.location.href = `mailto:${data.empfaenger}?subject=${subject}&body=${body}`;
-  }
-  document.getElementById("datum").valueAsDate = new Date();
+    pdf.setFontSize(10);
+    pdf.text(`Standort: ${i.standort}${i.wohnung ? ", " + i.wohnung : ""}`, 20, y); y += 6;
+    pdf.text(`Zustand: ${i.zustand} | Maßnahme: ${i.massnahme} | Priorität: ${i.prioritaet}`, 20, y); y += 6;
+    pdf.text(`Kosten: ${i.kosten.toLocaleString("de-DE")} €`, 20, y); y += 6;
+    if (i.beschreibung) {
+      const txt = pdf.splitTextToSize("Beschreibung: " + i.beschreibung, 170);
+      pdf.text(txt, 20, y);
+      y += txt.length * 5;
+    }
+    if (i.empfehlung) {
+      const txt = pdf.splitTextToSize("Empfehlung: " + i.empfehlung, 170);
+      pdf.text(txt, 20, y);
+      y += txt.length * 5;
+    }
+    if (i.bild && i.bild.startsWith("data:image")) {
+      if (y > 205) {
+        pdf.addPage();
+        y = 15;
+      }
+      pdf.addImage(i.bild, "JPEG", 20, y, 75, 55);
+      y += 62;
+    }
+    y += 5;
+  });
+  pdf.addPage();
+  y = 20;
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(16);
+  pdf.text("Unterschriften", 20, y);
+  y += 30;
+  pdf.setFont("helvetica", "normal");
+  pdf.text("Auftraggeber / Eigentümer", 20, y);
+  pdf.line(20, y + 18, 90, y + 18);
+  pdf.text("Auftragnehmer / Begleitung", 115, y);
+  pdf.line(115, y + 18, 185, y + 18);
+  pdf.save("Begehungsprotokoll.pdf");
+}
+function sendMail() {
+  const subject = encodeURIComponent("Begehungsprotokoll");
+  const body = encodeURIComponent(
+    "Hallo,\n\nanbei bzw. nachfolgend das Begehungsprotokoll zum Objekt.\n\nDie PDF wurde in der Web App erstellt und kann separat angehängt werden.\n\nViele Grüße"
+  );
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+renderChecklist();
 </script>
 </body>
 </html>
