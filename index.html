@@ -1,435 +1,217 @@
+Ja. Hier ist der komplette Code als eine HTML-Datei für iPhone/Safari:
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Transponder-Ausgabe</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f3f4f6;
-  color: #111827;
-  padding: 14px;
-}
-
-.app {
-  max-width: 520px;
-  margin: auto;
-}
-
-h1 {
-  font-size: 25px;
-  margin-bottom: 4px;
-}
-
-.subtitle {
-  color: #6b7280;
-  margin-bottom: 14px;
-}
-
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 5px 16px rgba(0,0,0,0.08);
-}
-
-label {
-  display: block;
-  font-weight: 700;
-  margin-top: 13px;
-  margin-bottom: 6px;
-}
-
-input, select, textarea {
-  width: 100%;
-  font-size: 16px;
-  padding: 13px;
-  border-radius: 12px;
-  border: 1px solid #d1d5db;
-  box-sizing: border-box;
-}
-
-textarea {
-  min-height: 170px;
-  line-height: 1.4;
-}
-
-button {
-  width: 100%;
-  margin-top: 12px;
-  padding: 15px;
-  border: none;
-  border-radius: 14px;
-  background: #2563eb;
-  color: white;
-  font-size: 17px;
-  font-weight: 700;
-}
-
-button.secondary {
-  background: #374151;
-}
-
-button.danger {
-  background: #dc2626;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-canvas {
-  width: 100%;
-  height: 160px;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  background: white;
-  touch-action: none;
-}
-
-.history-item {
-  padding: 10px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-
-.small {
-  color: #6b7280;
-  font-size: 13px;
-}
-
-#qrcode {
-  margin-top: 12px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Vollmacht Eigentümerversammlung</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 16px;
+      color: #111;
+    }
+    .app {
+      max-width: 520px;
+      margin: auto;
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 24px;
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      font-size: 17px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 90px;
+    }
+    canvas {
+      width: 100%;
+      height: 180px;
+      border: 2px dashed #aaa;
+      border-radius: 12px;
+      background: #fff;
+      touch-action: none;
+    }
+    button {
+      margin-top: 14px;
+      border: none;
+      font-weight: 700;
+      background: #007aff;
+      color: white;
+    }
+    button.secondary {
+      background: #8e8e93;
+    }
+    .hint {
+      font-size: 13px;
+      color: #666;
+      margin-top: 8px;
+    }
+  </style>
 </head>
-
 <body>
-<div class="app">
-
-<h1>Transponder-Ausgabe</h1>
-<div class="subtitle">Ausgabeprotokoll mit PDF, QR-Code, E-Mail und Historie</div>
-
-<div class="card">
-  <label>Schlüsselnummer</label>
-  <input id="keyNumber" placeholder="z. B. S-1042">
-
-  <label>Transponder ausgegeben an</label>
-  <input id="person" placeholder="Name eintragen">
-
-  <div class="row">
-    <div>
-      <label>Datum</label>
-      <input id="date" type="date">
-    </div>
-    <div>
-      <label>Rechte-Gruppe</label>
-      <select id="group">
-        <option>Gruppe 1</option>
-        <option>Gruppe 2</option>
-        <option>Gruppe 3</option>
-        <option>Gruppe 4</option>
-        <option>Gruppe 5</option>
-      </select>
-    </div>
+  <div class="app">
+    <h1>Vollmacht erstellen</h1>
+    <label>Anlass</label>
+    <select id="anlass">
+      <option>Eigentümerversammlung, Diepeschrather Straße 15, 51069 Köln am 10.06.2026</option>
+    </select>
+    <label>Datum der Vollmacht</label>
+    <input type="date" id="datum" />
+    <label>Ersteller der Vollmacht</label>
+    <select id="ersteller">
+      <option 
+        data-name="Meike Herbers"
+        data-geburt="06.06.1987"
+        data-adresse="Auf der Kicken 44, 51069 Köln">
+        Meike Herbers, geb. 06.06.1987, wohnhaft Auf der Kicken 44, 51069 Köln
+      </option>
+    </select>
+    <label>Vertreter</label>
+    <input id="vertreter" value="Kai Müller, geboren am 27.11.1979" />
+    <label>Empfänger</label>
+    <input id="empfaenger" value="hausverwaltung@rbiv.de" />
+    <label>Zusätzliche Hinweise</label>
+    <textarea id="hinweis">Hiermit wird der oben genannte Vertreter bevollmächtigt, die Erstellerin in der Eigentümerversammlung zu vertreten, Erklärungen abzugeben, Anträge zu stellen und das Stimmrecht auszuüben.</textarea>
+    <label>Unterschrift</label>
+    <canvas id="signature"></canvas>
+    <button class="secondary" onclick="clearSignature()">Unterschrift löschen</button>
+    <button onclick="createPDF()">PDF erstellen</button>
+    <button onclick="sendMail()">E-Mail an Hausverwaltung vorbereiten</button>
+    <p class="hint">
+      Hinweis: Auf dem iPhone kann die PDF heruntergeladen oder geteilt werden. Eine echte automatische E-Mail mit PDF-Anhang geht nur mit Server/Backend. Diese App öffnet deshalb die E-Mail vorbereitet.
+    </p>
   </div>
-
-  <label>Hinweise zur Nutzung</label>
-  <textarea id="notes"></textarea>
-
-  <label>Digitale Unterschrift Empfänger</label>
-  <canvas id="signature"></canvas>
-  <button class="secondary" onclick="clearSignature()">Unterschrift löschen</button>
-
-  <button onclick="createProtocol()">Protokoll erstellen</button>
-  <button onclick="createPDF()">PDF erzeugen</button>
-  <button onclick="sendMail()">E-Mail-Entwurf erstellen</button>
-  <button class="secondary" onclick="exportCSV()">CSV / Excel exportieren</button>
-</div>
-
-<div class="card">
-  <h2>QR-Code</h2>
-  <div class="small">Der QR-Code enthält die wichtigsten Ausgabedaten.</div>
-  <div id="qrcode"></div>
-</div>
-
-<div class="card">
-  <h2>Ausgabeprotokoll</h2>
-  <div id="result">Noch kein Protokoll erstellt.</div>
-</div>
-
-<div class="card">
-  <h2>Historie</h2>
-  <div id="history"></div>
-  <button class="danger" onclick="clearHistory()">Historie löschen</button>
-</div>
-
-</div>
-
 <script>
-const defaultNotes = `Hinweise zur Nutzung des Transponders:
-
-1. Der Transponder ist sorgfältig aufzubewahren.
-
-2. Der Transponder darf nicht an unberechtigte Personen weitergegeben werden.
-
-3. Der Transponder ist ausschließlich für freigegebene Bereiche und dienstliche Zwecke zu verwenden.
-
-4. Bei Verlust, Beschädigung oder Fehlfunktion ist unverzüglich das zentrale Büro zu informieren.
-
-5. Für Verlust oder nicht ordnungsgemäße Rückgabe kann eine Haftungsgebühr von 50 € erhoben werden.
-
-6. Ein Batteriewechsel ist ausschließlich über das zentrale Büro zu veranlassen.
-
-7. Eigenständiges Öffnen, Manipulieren oder Beschriften des Transponders ist nicht zulässig.
-
-8. Änderungen der Zutrittsrechte dürfen nur durch berechtigte Personen erfolgen.
-
-9. Der Transponder ist bei Austritt, Aufgabenwechsel oder auf Aufforderung unverzüglich zurückzugeben.
-
-10. Der Empfänger bestätigt mit seiner Unterschrift den Erhalt und die Kenntnisnahme dieser Hinweise.`;
-
-document.getElementById("notes").value = defaultNotes;
-
-function setToday() {
-  const d = new Date();
-  document.getElementById("date").value = d.toISOString().split("T")[0];
-}
-setToday();
-
-function getData() {
-  return {
-    keyNumber: document.getElementById("keyNumber").value || "nicht angegeben",
-    person: document.getElementById("person").value || "nicht angegeben",
-    date: document.getElementById("date").value,
-    group: document.getElementById("group").value,
-    notes: document.getElementById("notes").value
-  };
-}
-
-function formatDate(date) {
-  if (!date) return "";
-  const [y,m,d] = date.split("-");
-  return `${d}.${m}.${y}`;
-}
-
-function createProtocol() {
-  const d = getData();
-
-  document.getElementById("result").innerHTML = `
-    <p><b>Schlüsselnummer:</b> ${d.keyNumber}</p>
-    <p><b>Ausgegeben an:</b> ${d.person}</p>
-    <p><b>Datum:</b> ${formatDate(d.date)}</p>
-    <p><b>Rechte-Gruppe:</b> ${d.group}</p>
-    <p><b>Haftungsgebühr:</b> 50 €</p>
-    <hr>
-    <p>${d.notes.replace(/\n/g, "<br>")}</p>
-  `;
-
-  createQRCode();
-  saveHistory();
-}
-
-function createQRCode() {
-  const d = getData();
-  const qrText =
-`Transponder-Ausgabe
-Schlüsselnummer: ${d.keyNumber}
-Empfänger: ${d.person}
-Datum: ${formatDate(d.date)}
-Rechte: ${d.group}
-Haftungsgebühr: 50 €`;
-
-  document.getElementById("qrcode").innerHTML = "";
-  new QRCode(document.getElementById("qrcode"), {
-    text: qrText,
-    width: 150,
-    height: 150
-  });
-}
-
-function saveHistory() {
-  const d = getData();
-  let history = JSON.parse(localStorage.getItem("transponderHistory") || "[]");
-  history.unshift({
-    ...d,
-    savedAt: new Date().toLocaleString("de-DE")
-  });
-  localStorage.setItem("transponderHistory", JSON.stringify(history));
-  renderHistory();
-}
-
-function renderHistory() {
-  let history = JSON.parse(localStorage.getItem("transponderHistory") || "[]");
-
-  if (history.length === 0) {
-    document.getElementById("history").innerHTML = "Keine Einträge vorhanden.";
-    return;
+  const canvas = document.getElementById("signature");
+  const ctx = canvas.getContext("2d");
+  let drawing = false;
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#000";
   }
-
-  document.getElementById("history").innerHTML = history.map(item => `
-    <div class="history-item">
-      <b>${item.keyNumber}</b><br>
-      ${item.person}<br>
-      ${formatDate(item.date)} – ${item.group}<br>
-      <span class="small">Gespeichert: ${item.savedAt}</span>
-    </div>
-  `).join("");
-}
-renderHistory();
-
-function clearHistory() {
-  if (confirm("Historie wirklich löschen?")) {
-    localStorage.removeItem("transponderHistory");
-    renderHistory();
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    };
   }
-}
-
-function sendMail() {
-  const d = getData();
-
-  const subject = encodeURIComponent(`Transponder-Ausgabe ${d.keyNumber}`);
-
-  const body = encodeURIComponent(
-`Hallo,
-
-anbei die Daten zur Transponder-Ausgabe:
-
-Schlüsselnummer: ${d.keyNumber}
-Ausgegeben an: ${d.person}
-Datum: ${formatDate(d.date)}
-Rechte-Gruppe: ${d.group}
-
-Haftungsgebühr bei Verlust oder nicht ordnungsgemäßer Rückgabe: 50 €
-
-Hinweise:
-${d.notes}
-
-Viele Grüße`
-  );
-
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
-}
-
-function exportCSV() {
-  const history = JSON.parse(localStorage.getItem("transponderHistory") || "[]");
-
-  let csv = "Schlüsselnummer;Empfänger;Datum;Rechte-Gruppe;Gespeichert am\n";
-
-  history.forEach(i => {
-    csv += `"${i.keyNumber}";"${i.person}";"${formatDate(i.date)}";"${i.group}";"${i.savedAt}"\n`;
+  canvas.addEventListener("pointerdown", e => {
+    drawing = true;
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
   });
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "transponder-historie.csv";
-  a.click();
-
-  URL.revokeObjectURL(url);
-}
-
-/* Digitale Unterschrift */
-const canvas = document.getElementById("signature");
-const ctx = canvas.getContext("2d");
-let drawing = false;
-
-function resizeCanvas() {
-  canvas.width = canvas.offsetWidth;
-  canvas.height = 160;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-function getPos(e) {
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches ? e.touches[0] : e;
-  return {
-    x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top
-  };
-}
-
-canvas.addEventListener("pointerdown", e => {
-  drawing = true;
-  const p = getPos(e);
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y);
-});
-
-canvas.addEventListener("pointermove", e => {
-  if (!drawing) return;
-  const p = getPos(e);
-  ctx.lineWidth = 2;
-  ctx.lineCap = "round";
-  ctx.lineTo(p.x, p.y);
-  ctx.stroke();
-});
-
-canvas.addEventListener("pointerup", () => drawing = false);
-canvas.addEventListener("pointerleave", () => drawing = false);
-
-function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-async function createPDF() {
-  const { jsPDF } = window.jspdf;
-  const d = getData();
-
-  const pdf = new jsPDF();
-  let y = 15;
-
-  pdf.setFontSize(18);
-  pdf.text("Transponder-Ausgabeprotokoll", 15, y);
-  y += 12;
-
-  pdf.setFontSize(11);
-  pdf.text(`Schlüsselnummer: ${d.keyNumber}`, 15, y); y += 7;
-  pdf.text(`Ausgegeben an: ${d.person}`, 15, y); y += 7;
-  pdf.text(`Datum: ${formatDate(d.date)}`, 15, y); y += 7;
-  pdf.text(`Rechte-Gruppe: ${d.group}`, 15, y); y += 7;
-  pdf.text(`Haftungsgebühr: 50 EUR`, 15, y); y += 10;
-
-  pdf.setFontSize(13);
-  pdf.text("Hinweise zur Nutzung:", 15, y);
-  y += 8;
-
-  pdf.setFontSize(10);
-  const splitNotes = pdf.splitTextToSize(d.notes, 180);
-  pdf.text(splitNotes, 15, y);
-  y += splitNotes.length * 5 + 10;
-
-  if (y > 240) {
-    pdf.addPage();
-    y = 15;
+  canvas.addEventListener("pointermove", e => {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  });
+  canvas.addEventListener("pointerup", () => drawing = false);
+  canvas.addEventListener("pointerleave", () => drawing = false);
+  function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
-
-  pdf.setFontSize(12);
-  pdf.text("Unterschrift Empfänger:", 15, y);
-  y += 8;
-
-  const sig = canvas.toDataURL("image/png");
-  pdf.addImage(sig, "PNG", 15, y, 80, 35);
-
-  y += 45;
-  pdf.text("Unterschrift Ausgabe:", 15, y);
-  pdf.line(60, y, 150, y);
-
-  pdf.save(`Transponder_${d.keyNumber}.pdf`);
-}
+  function getData() {
+    const erstellerSelect = document.getElementById("ersteller");
+    const option = erstellerSelect.options[erstellerSelect.selectedIndex];
+    return {
+      anlass: document.getElementById("anlass").value,
+      datum: document.getElementById("datum").value,
+      erstellerName: option.dataset.name,
+      erstellerGeburt: option.dataset.geburt,
+      erstellerAdresse: option.dataset.adresse,
+      vertreter: document.getElementById("vertreter").value,
+      empfaenger: document.getElementById("empfaenger").value,
+      hinweis: document.getElementById("hinweis").value
+    };
+  }
+  function formatDate(dateString) {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    return d.toLocaleDateString("de-DE");
+  }
+  function createPDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    const data = getData();
+    let y = 20;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18);
+    pdf.text("Vollmacht", 105, y, { align: "center" });
+    y += 18;
+    pdf.setFontSize(11);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Anlass: ${data.anlass}`, 20, y, { maxWidth: 170 });
+    y += 18;
+    pdf.text(`Datum der Vollmacht: ${formatDate(data.datum)}`, 20, y);
+    y += 12;
+    pdf.text("Vollmachtgeberin:", 20, y);
+    y += 8;
+    pdf.text(`${data.erstellerName}, geboren am ${data.erstellerGeburt}`, 20, y);
+    y += 8;
+    pdf.text(`wohnhaft ${data.erstellerAdresse}`, 20, y);
+    y += 16;
+    pdf.text("bevollmächtigt hiermit:", 20, y);
+    y += 8;
+    pdf.text(data.vertreter, 20, y);
+    y += 16;
+    const text = pdf.splitTextToSize(data.hinweis, 170);
+    pdf.text(text, 20, y);
+    y += text.length * 7 + 18;
+    pdf.text("Ort, Datum: Köln, " + formatDate(data.datum), 20, y);
+    y += 16;
+    const signatureImg = canvas.toDataURL("image/png");
+    pdf.text("Unterschrift:", 20, y);
+    y += 6;
+    pdf.addImage(signatureImg, "PNG", 20, y, 80, 35);
+    pdf.save("Vollmacht_Eigentuemer­versammlung.pdf");
+  }
+  function sendMail() {
+    const data = getData();
+    const subject = encodeURIComponent("Vollmacht Eigentümerversammlung Diepeschrather Straße 15");
+    const body = encodeURIComponent(
+      "Sehr geehrte Damen und Herren,\n\n" +
+      "anbei bzw. nachfolgend erhalten Sie die Vollmacht für die Eigentümerversammlung Diepeschrather Straße 15, 51069 Köln am 10.06.2026.\n\n" +
+      "Vollmachtgeberin: " + data.erstellerName + "\n" +
+      "Vertreter: " + data.vertreter + "\n\n" +
+      "Mit freundlichen Grüßen\n" +
+      data.erstellerName
+    );
+    window.location.href = `mailto:${data.empfaenger}?subject=${subject}&body=${body}`;
+  }
+  document.getElementById("datum").valueAsDate = new Date();
 </script>
-
 </body>
 </html>
